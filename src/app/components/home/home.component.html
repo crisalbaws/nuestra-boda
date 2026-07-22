@@ -1,0 +1,43 @@
+<div class="home-container">
+  <div class="decorative-hearts">
+    <span class="heart">♥</span>
+    <span class="heart">♥</span>
+    <span class="heart">♥</span>
+    <span class="heart">♥</span>
+    <span class="heart">♥</span>
+  </div>
+  
+  <div class="content">
+    <div class="icon">💒</div>
+    
+    @if (wedding) {
+      <h1 class="title">{{ wedding.partner1Name }} & {{ wedding.partner2Name }}</h1>
+      @if (wedding.date) {
+        <p class="subtitle">{{ wedding.date }}</p>
+      }
+    } @else {
+      <h1 class="title">Confirmación de Asistencia</h1>
+      <p class="subtitle">Boda</p>
+    }
+    
+    <p class="description">
+      {{ wedding ? 'Confirma tu asistencia a esta gran celebración' : 'Bienvenido al sistema de confirmación' }}
+    </p>
+    
+    <div class="buttons">
+      <a href="#/confirm" class="btn btn-confirm">
+        <span class="btn-icon">✓</span>
+        Confirmar Asistencia
+      </a>
+      
+      <a href="#/admin" class="btn btn-admin">
+        <span class="btn-icon">⚙</span>
+        Panel Admin
+      </a>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <p>Hecho con ❤️</p>
+  </div>
+</div>

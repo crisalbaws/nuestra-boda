@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f0eb;
+  color: #4a3728;
+  line-height: 1.6;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: #a67c52;
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #e8dfd5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #a67c52;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8b6340;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input, textarea {
+  font-family: inherit;
+}
+
+input:focus, textarea:focus, button:focus {
+  outline: 2px solid #a67c52;
+  outline-offset: 2px;
+}
+
+// Color palette - Wedding theme
+:root {
+  --color-cream: #f5f0eb;
+  --color-beige: #e8dfd5;
+  --color-warm-beige: #d4c4b0;
+  --color-sand: #c9b896;
+  --color-gold: #b8956c;
+  --color-copper: #a67c52;
+  --color-brown: #8b6340;
+  --color-dark-brown: #5c4a3a;
+  --color-espresso: #3d2e24;
+  --color-champagne: #f7e7ce;
+  --color-rose: #d4a5a5;
+  --color-blush: #e8d0d0;
+}
+
+// Typography
+h1, h2, h3 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}

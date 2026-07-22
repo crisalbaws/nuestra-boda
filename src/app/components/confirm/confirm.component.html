@@ -1,0 +1,218 @@
+@if (wedding) {
+  <div class="confirm-container">
+    
+    <!-- Animación de foto de entrada -->
+    @if (showPhotoAnimation) {
+      <div class="photo-overlay" (animationend)="onPhotoAnimationEnd()">
+        <div class="photo-animating">
+          <img src="/KarlaAlexfoto.jpeg" alt="Karla y Alex" />
+        </div>
+      </div>
+    }
+    
+    <div class="background-image"></div>
+    
+    @if (!showForm) {
+    <!-- Vista inicial de invitación -->
+    <div class="invitation-view">
+      <div class="invitation-card">
+        <div class="photo-frame">
+          <img src="/KarlaAlexfoto.jpeg" alt="Karla y Alex" />
+        </div>
+        
+        <div class="invitation-text">
+          <p class="invitation-title">Nuestra Boda</p>
+          <p class="invitation-intro">¡Estás cordialmente invitado(a)!</p>
+          <h1 class="couple-names">{{ wedding.partner1Name }} & {{ wedding.partner2Name }}</h1>
+          
+          @if (wedding.date) {
+            <p class="date">{{ wedding.date }}</p>
+          }
+          
+          <div class="event-details">
+            @if (wedding.templeLocation || wedding.templeTime) {
+              <div class="event-item">
+                <span class="event-icon">💒</span>
+                <span class="event-label">Misa</span>
+                @if (wedding.templeTime) {
+                  <span class="event-time">{{ wedding.templeTime }}</span>
+                }
+                @if (wedding.templeLocation) {
+                  <span class="event-location">{{ wedding.templeLocation }}</span>
+                }
+              </div>
+            }
+            
+            @if (wedding.partyLocation || wedding.partyTime) {
+              <div class="event-item">
+                <span class="event-icon">🎉</span>
+                <span class="event-label">Recepción</span>
+                @if (wedding.partyTime) {
+                  <span class="event-time">{{ wedding.partyTime }}</span>
+                }
+                @if (wedding.partyLocation) {
+                  <span class="event-location">{{ wedding.partyLocation }}</span>
+                }
+              </div>
+            }
+          </div>
+        </div>
+        
+        <button class="confirm-button" (click)="showForm = true">
+          Confirmar Asistencia
+        </button>
+      </div>
+    </div>
+    
+    } @else if (!foundGuest && !alreadyConfirmed) {
+    <!-- Vista del formulario - buscar invitado -->
+    <div class="form-view">
+      <div class="form-card">
+        <button class="back-button" (click)="showForm = false">←</button>
+        
+        <p class="card-subtitle">Ingresa tu número de celular para confirmar</p>
+        
+        <div class="search-section">
+          <div class="search-box">
+            <input 
+              type="tel" 
+              [(ngModel)]="phone" 
+              placeholder="10 dígitos"
+              maxlength="10"
+              (keyup.enter)="searchByPhone()"
+              class="search-input"
+            />
+            <button class="search-btn" (click)="searchByPhone()">
+              🔍
+            </button>
+          </div>
+          
+          @if (isSearching) {
+            <p class="loading">Buscando...</p>
+          }
+          
+          @if (notFound) {
+            <div class="not-found">
+              <p>😕 {{ errorMessage || 'No encontramos tu invitación' }}</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+    
+    } @else if (alreadyConfirmed || confirmationComplete) {
+    <!-- Vista de ya confirmado o confirmación exitosa -->
+    <div class="success-view">
+      <div class="invitation-card confirmed-card">
+        <div class="photo-frame small">
+          <img src="/KarlaAlexfoto.jpeg" alt="Karla y Alex" />
+        </div>
+        
+        @if (alreadyConfirmed) {
+          <div class="success-icon-large">✓</div>
+          <h2 class="success-title">¡Ya confirmaste!</h2>
+        } @else if (isAttending) {
+          <div class="success-icon-large">🎉</div>
+          <h2 class="success-title">¡Nos vemos pronto!</h2>
+        } @else {
+          <div class="success-icon-large">😔</div>
+          <h2 class="success-title">¡Lástima!</h2>
+        }
+        <p class="guest-name">{{ foundGuest?.name }}</p>
+        
+        @if (isAttending) {
+          <div class="confirmed-info">
+            @if (wedding.date) {
+              <div class="info-item">
+                <span class="info-icon">📅</span>
+                <span>{{ wedding.date }}</span>
+              </div>
+            }
+            
+            @if (wedding.templeTime || wedding.templeLocation) {
+              <div class="info-item">
+                <span class="info-icon">💒</span>
+                <div class="info-text">
+                  @if (wedding.templeTime) {
+                    <span class="info-main">{{ wedding.templeTime }}</span>
+                  }
+                  @if (wedding.templeLocation) {
+                    <span class="info-sub">{{ wedding.templeLocation }}</span>
+                  }
+                </div>
+              </div>
+            }
+            
+            @if (wedding.partyTime || wedding.partyLocation) {
+              <div class="info-item">
+                <span class="info-icon">🎉</span>
+                <div class="info-text">
+                  @if (wedding.partyTime) {
+                    <span class="info-main">{{ wedding.partyTime }}</span>
+                  }
+                  @if (wedding.partyLocation) {
+                    <span class="info-sub">{{ wedding.partyLocation }}</span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+          
+          <button class="copy-all-btn" (click)="copyAllInfo()">
+            📋 Copiar toda la información
+          </button>
+        }
+      </div>
+    </div>
+    
+    } @else {
+    <!-- Vista del formulario - confirmar asistencia -->
+    <div class="form-view">
+      <div class="form-card">
+        <button class="back-button" (click)="foundGuest = null">←</button>
+        
+        <div class="confirm-section">
+          <div class="selected-guest">
+            <span class="check-icon">✓</span>
+            <span>{{ foundGuest?.name }}</span>
+          </div>
+          
+          <div class="attendance-options">
+            <h3>¿Podrás asistir?</h3>
+            
+            <label class="radio-option" [class.selected]="isAttending">
+              <input 
+                type="radio" 
+                [(ngModel)]="isAttending" 
+                [value]="true"
+              />
+              <span class="option-icon">🥳</span>
+              <span class="option-text">¡Sí, ahí estaré!</span>
+            </label>
+            
+            <label class="radio-option decline" [class.selected]="!isAttending">
+              <input 
+                type="radio" 
+                [(ngModel)]="isAttending" 
+                [value]="false"
+              />
+              <span class="option-icon">😢</span>
+              <span class="option-text">Lo siento, no podré</span>
+            </label>
+          </div>
+          
+          <button class="confirm-btn" (click)="confirmAttendance()">
+            Confirmar
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+} @else {
+  <div class="no-wedding">
+    <h1>💒</h1>
+    <h2>Bienvenido</h2>
+    <p>Este enlace aún no ha sido configurado.</p>
+  </div>
+}

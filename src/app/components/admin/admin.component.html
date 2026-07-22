@@ -1,0 +1,381 @@
+@if (!isAuthenticated) {
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-icon">🔐</div>
+      <h1>Acceso Administrativo</h1>
+      <p>Ingresa tus credenciales para continuar</p>
+      
+      <form (ngSubmit)="login()">
+        <div class="form-group">
+          <label for="username">Usuario</label>
+          <input 
+            id="username"
+            type="text" 
+            [(ngModel)]="username" 
+            name="username"
+            placeholder="Usuario"
+            required
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input 
+            id="password"
+            type="password" 
+            [(ngModel)]="password" 
+            name="password"
+            placeholder="Contraseña"
+            required
+          />
+        </div>
+        
+        @if (authError) {
+          <div class="error-message">
+            Usuario o contraseña incorrectos
+          </div>
+        }
+        
+        <button type="submit" class="login-btn">Ingresar</button>
+      </form>
+    </div>
+  </div>
+} @else {
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1 class="admin-title">Panel de Administración</h1>
+      <button class="logout-btn" (click)="logout()">Cerrar Sesión</button>
+    </div>
+    
+    <div class="admin-section">
+      <h2>💒 Configuración de la Boda</h2>
+      <div class="config-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="partner1">Nombre del Primer Novio/a</label>
+            <input 
+              id="partner1" 
+              type="text" 
+              [(ngModel)]="wedding.partner1Name" 
+              placeholder="Ej: María"
+            />
+          </div>
+          
+          <div class="form-group">
+            <label for="partner2">Nombre del Segundo Novio/a</label>
+            <input 
+              id="partner2" 
+              type="text" 
+              [(ngModel)]="wedding.partner2Name" 
+              placeholder="Ej: Juan"
+            />
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="date">Fecha</label>
+            <input 
+              id="date" 
+              type="text" 
+              [(ngModel)]="wedding.date" 
+              placeholder="Ej: 15 de Diciembre, 2024"
+            />
+          </div>
+          
+          <div class="form-group">
+            <label for="templeTime">Hora de la Misa</label>
+            <input 
+              id="templeTime" 
+              type="text" 
+              [(ngModel)]="wedding.templeTime" 
+              placeholder="Ej: 4:00 PM"
+            />
+          </div>
+          
+          <div class="form-group">
+            <label for="templeLocation">Lugar de la Misa</label>
+            <input 
+              id="templeLocation" 
+              type="text" 
+              [(ngModel)]="wedding.templeLocation" 
+              placeholder="Ej: Parroquia de San José"
+            />
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="partyTime">Hora de la Recepción</label>
+            <input 
+              id="partyTime" 
+              type="text" 
+              [(ngModel)]="wedding.partyTime" 
+              placeholder="Ej: 6:00 PM"
+            />
+          </div>
+          
+          <div class="form-group">
+            <label for="partyLocation">Lugar de la Recepción</label>
+            <input 
+              id="partyLocation" 
+              type="text" 
+              [(ngModel)]="wedding.partyLocation" 
+              placeholder="Ej: Hacienda San Miguel"
+            />
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="templeMapUrl">Google Maps Misa</label>
+            <input 
+              id="templeMapUrl" 
+              type="text" 
+              [(ngModel)]="wedding.templeMapUrl" 
+              placeholder="https://maps.google.com/..."
+            />
+          </div>
+          
+          <div class="form-group">
+            <label for="partyMapUrl">Google Maps Recepción</label>
+            <input 
+              id="partyMapUrl" 
+              type="text" 
+              [(ngModel)]="wedding.partyMapUrl" 
+              placeholder="https://maps.google.com/..."
+            />
+          </div>
+        </div>
+        
+        <button class="btn-primary" (click)="saveWeddingConfig()">
+          Guardar Configuración
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-section">
+      <h2>📊 Estadísticas</h2>
+      <div class="stats-grid">
+        <div class="stat-card confirmed">
+          <span class="stat-number">{{ confirmedCount }}</span>
+          <span class="stat-label">Confirmados</span>
+        </div>
+        <div class="stat-card declined">
+          <span class="stat-number">{{ declinedCount }}</span>
+          <span class="stat-label">Rechazados</span>
+        </div>
+        <div class="stat-card pending">
+          <span class="stat-number">{{ pendingCount }}</span>
+          <span class="stat-label">Pendientes</span>
+        </div>
+        <div class="stat-card total">
+          <span class="stat-number">{{ totalAdults }}</span>
+          <span class="stat-label">Adultos</span>
+        </div>
+        <div class="stat-card total kids">
+          <span class="stat-number">{{ totalKids }}</span>
+          <span class="stat-label">Niños</span>
+        </div>
+        <div class="stat-card total general">
+          <span class="stat-number">{{ totalGeneral }}</span>
+          <span class="stat-label">Total</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-section">
+      <h2>➕ Agregar Invitado</h2>
+      <div class="add-guest-form">
+        <div class="form-field">
+          <label>Nombre completo</label>
+          <input 
+            type="text" 
+            [(ngModel)]="newGuestName" 
+            placeholder="Ej: María García"
+            (keyup.enter)="addGuest()"
+          />
+        </div>
+        <div class="form-field">
+          <label>Apodo</label>
+          <input 
+            type="text" 
+            [(ngModel)]="newGuestNickname" 
+            placeholder="Ej: Maru"
+            (keyup.enter)="addGuest()"
+          />
+        </div>
+        <div class="form-field">
+          <label>Celular</label>
+          <input 
+            type="tel" 
+            [(ngModel)]="newGuestPhone" 
+            placeholder="5512345678"
+            maxlength="10"
+            (keyup.enter)="addGuest()"
+          />
+        </div>
+        <div class="form-field small">
+          <label>Adultos</label>
+          <input 
+            type="number" 
+            [(ngModel)]="newGuestPlusOnesAdults" 
+            min="1" 
+            max="20"
+            placeholder="1"
+            class="plus-ones"
+          />
+        </div>
+        <div class="form-field small">
+          <label>Niños</label>
+          <input 
+            type="number" 
+            [(ngModel)]="newGuestPlusOnesKids" 
+            min="0" 
+            max="20"
+            placeholder="0"
+            class="plus-ones"
+          />
+        </div>
+        <button class="btn-primary" (click)="addGuest()">Agregar</button>
+      </div>
+    </div>
+
+    <div class="admin-section">
+      <div class="section-header">
+        <h2>👥 Lista de Invitados ({{ guests.length }})</h2>
+        <button class="btn-pdf" (click)="downloadPdf()">📄 Descargar PDF</button>
+      </div>
+      
+      <div class="table-container">
+        <table class="guest-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Celular</th>
+              <th>Adultos</th>
+              <th>Niños</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (guest of paginatedGuests; track guest.id) {
+              <tr [class.confirmed]="guest.confirmed" [class.declined]="guest.dietaryRestrictions === 'declined'">
+                <td class="name-cell">
+                  <span class="guest-name">{{ guest.name }}</span>
+                  @if (guest.nickname) {
+                    <span class="guest-nickname">({{ guest.nickname }})</span>
+                  }
+                </td>
+                <td class="phone-cell">{{ guest.phone }}</td>
+                <td class="count-cell">{{ guest.plusOnesAdults }}</td>
+                <td class="count-cell">{{ guest.plusOnesKids }}</td>
+                <td class="status-cell">
+                  @if (guest.confirmed) {
+                    <span class="status-badge confirmed">✓ Confirmado</span>
+                  } @else if (guest.dietaryRestrictions === 'declined') {
+                    <span class="status-badge declined">✗ No Asistirá</span>
+                  } @else {
+                    <span class="status-badge pending">⏳ Pendiente</span>
+                  }
+                </td>
+                <td class="actions-cell">
+                  <button class="btn-icon btn-link" (click)="generateLink(guest)" title="Generar enlace">🔗</button>
+                  <button class="btn-icon btn-edit" (click)="editGuest(guest)" title="Editar">✏️</button>
+                  <button class="btn-icon btn-confirm" (click)="confirmGuest(guest)" title="Confirmar">✓</button>
+                  <button class="btn-icon btn-decline" (click)="declineGuest(guest)" title="Rechazar">✗</button>
+                  <button class="btn-icon btn-delete" (click)="removeGuest(guest)" title="Eliminar">🗑</button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="empty-row">No hay invitados registrados</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      
+      @if (totalPages > 1) {
+        <div class="pagination">
+          <button class="page-btn" (click)="currentPage = 1" [disabled]="currentPage === 1">«</button>
+          <button class="page-btn" (click)="currentPage = currentPage - 1" [disabled]="currentPage === 1">‹</button>
+          
+          @for (page of visiblePages; track page) {
+            <button class="page-btn" [class.active]="page === currentPage" (click)="currentPage = page">{{ page }}</button>
+          }
+          
+          <button class="page-btn" (click)="currentPage = currentPage + 1" [disabled]="currentPage === totalPages">›</button>
+          <button class="page-btn" (click)="currentPage = totalPages" [disabled]="currentPage === totalPages">»</button>
+        </div>
+      }
+    </div>
+  </div>
+
+  @if (selectedGuestForLink) {
+    <div class="modal-overlay" (click)="closeLinkModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <h3>Enlace de Invitación</h3>
+        <p>Comparte con <strong>{{ selectedGuestForLink.name }}</strong></p>
+        
+        <div class="link-box">
+          <input type="text" [value]="generatedLink" readonly />
+          <button class="copy-btn" (click)="copyLink()">
+            {{ linkCopied ? '✓ Copiado' : '📋 Copiar' }}
+          </button>
+        </div>
+
+        @if (selectedGuestForLink.nickname) {
+          <div class="nickname-toggle">
+            <label>
+              <input type="checkbox" [(ngModel)]="useNickname" (change)="regenerateMessage()" />
+              Usar apodo: <strong>{{ selectedGuestForLink.nickname }}</strong>
+            </label>
+          </div>
+        }
+        
+        <div class="message-editor">
+          <label>Mensaje para WhatsApp:</label>
+          <textarea 
+            [(ngModel)]="generatedMessage" 
+            rows="4"
+          ></textarea>
+          <button class="regenerate-btn" (click)="regenerateMessage()">🔄 Regenerar</button>
+        </div>
+        
+        <div class="action-buttons">
+          <button class="copy-btn" (click)="copyMessage()">📋 Copiar Mensaje</button>
+          <a [href]="getWhatsAppLink()" target="_blank" class="whatsapp-btn">💬 WhatsApp</a>
+        </div>
+        
+        <button class="close-modal-btn" (click)="closeLinkModal()">Cerrar</button>
+      </div>
+    </div>
+  }
+
+  @if (guestToEdit) {
+    <div class="modal-overlay" (click)="closeEditModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <h3>Editar Invitado</h3>
+        <p>Modificando: <strong>{{ guestToEdit.name }}</strong></p>
+        
+        <div class="edit-form">
+          <div class="form-field">
+            <label>Adultos <small>(mín 1)</small></label>
+            <input type="number" [(ngModel)]="editAdults" min="1" max="20" />
+          </div>
+          <div class="form-field">
+            <label>Niños</label>
+            <input type="number" [(ngModel)]="editKids" min="0" max="20" />
+          </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button class="btn-primary" (click)="saveGuestEdit()">Guardar</button>
+          <button class="btn-secondary" (click)="closeEditModal()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  }
+}
